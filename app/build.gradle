@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.protobuf'
 }
 
 android {
@@ -32,6 +33,31 @@ android {
     }
 }
 
+protobuf {
+    protoc {
+        if (osdetector.os == "osx") {
+            artifact = 'com.google.protobuf:protoc:3.14.0:osx-x86_64'
+        } else {
+            artifact = 'com.google.protobuf:protoc:3.14.0'
+        }
+    }
+
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite'
+                }
+            }
+            task.plugins {
+                grpc {
+                    option 'lite'
+                }
+            }
+        }
+    }
+}
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
@@ -41,4 +67,14 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    // proto data store, if project needs
+    implementation  "androidx.datastore:datastore:1.0.0"
+    implementation  "com.google.protobuf:protobuf-javalite:3.18.0"
+
+    // grpc client
+    implementation 'io.grpc:grpc-okhttp:1.47.0'
+    implementation 'io.grpc:grpc-protobuf-lite:1.47.0'
+    implementation 'io.grpc:grpc-stub:1.47.0'
+    implementation 'org.apache.tomcat:annotations-api:6.0.53'
 }
